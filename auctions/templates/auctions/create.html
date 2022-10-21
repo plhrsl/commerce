@@ -1,0 +1,30 @@
+{% extends "auctions/layout.html" %}
+
+{% load bootstrap %}
+
+{% block body %}
+<h2>New Listing</h2>
+<div class="d-flex flex-column align-items-center listing-form py-4 m-0">
+    <form id="create" action="{% url 'create' %}" method="post">
+        {% csrf_token %}
+        {{ form.title | bootstrap}}
+        <br>
+        {{ form.description | bootstrap }}
+        <br>
+        {{ form.image_url | bootstrap }}
+        <br>
+        <div class="row">
+            <div class="col-8">
+                {{ form.category | bootstrap }}
+            </div>
+            <br>
+            <div class="col-4">
+                {{ form.starting_bid | bootstrap }}
+            </div>
+        </div>
+        <div class="d-flex justify-content-center pt-4">
+            <input class=" btn btn-success" type="submit" value="Add Listing" form="create">
+        </div>
+    </form>
+</div>
+{% endblock %}

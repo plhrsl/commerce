@@ -1,0 +1,95 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{% if message is not None %}
+<div class="alert alert-secondary" role="alert">
+    {{ message }}
+</div>
+{% endif %}
+<div class="row my-4 justify-content-center align-items-center ">
+    <div class="d-flex col justify-content-center align-items-center listing-col">
+        <img class="listing-img" src="{{ listing.image_url }}" alt="">
+    </div>
+    <div class="d-flex flex-column col justify-content-center listing-col">
+        <div class="row py-3">
+            <div class="col ">
+                <form action="{% url 'watch' listing.id %}" method="post" id="watchForm">
+                    {% csrf_token %}
+                    <input type="checkbox" class="btn-check" id="watch" autocomplete="off"
+                        onclick="document.getElementById('watchForm').submit()" name="watch" {{ is_watching }}>
+                    <label class="btn btn-sm btn-outline-primary m-0" for="watch">Watch</label>
+                </form>
+            </div>
+            {% if user.id == listing.user.id and listing.active %}
+            <div class="d-flex col justify-content-end">
+                <form action="{% url 'close' listing.id %}" method="post" id="closeForm">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-sm btn-outline-danger" value="Close listing" form="closeForm">
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        <h3>{{ listing.title }}</h3>
+        <p>{{ listing.description }}</p>
+        <h3>${{ listing.current_bid }}</h3>
+        {% if listing.active %}
+        <i>
+            {{ bid_count }} bid(s) so far.
+            {% if current_bid_is_from_user %}
+            <b class="text-primary">Your bid is the current bid.</b>
+            {% endif %}
+        </i>
+        <form action="{% url 'bid' listing.id %}" method="post" id="bidForm">
+            {% csrf_token %}
+            <div class="input-group my-2">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">$</span>
+                </div>
+                <input type="number" class="form-control" placeholder="Bid" name="bid">
+                <div class="input-group-append">
+                    <input class="btn btn-outline-success" type="submit" value="Place bid" form="bidForm"></input>
+                </div>
+            </div>
+        </form>
+        {% else %}
+        <p class="text-danger mb-0">This listing is closed.</p>
+        {% if current_bid_is_from_user %}
+        <h5 class="text-success mt-0">You won that auction!</h5>
+        {% endif %}
+        {% endif %}
+        <h5 class="mt-3">Details</h5>
+        <ul class="listing-details">
+            <li>Listed by <a href="{% url 'user' listing.user.id %}">{{ listing.user.username }}</a></li>
+            <li>Category: <a href="{% url 'category' listing.category %}">{{ category }}</a></li>
+        </ul>
+    </div>
+</div>
+<hr class="my-5" />
+<div class="row justify-content-center my-4">
+    <div class="d-flex flex-column col listing-col px-4">
+        <form action="{% url 'comment' listing.id %}" method="post" id="commentForm">
+            {% csrf_token %}
+            <div class="input-group input-group-sm mb-3">
+                <textarea name="content" class="form-control text-sm" rows="5"
+                    placeholder="Write comment..."></textarea>
+            </div>
+            <input class="btn btn-sm btn-outline-primary w-100 mb-3" type="submit" value="Add comment"
+                form="commentForm">
+        </form>
+    </div>
+    <div class="col listing-col border-start px-4">
+        <h5>Comments</h5>
+        <div class="list-group my-3">
+            {% for comment in comments %}
+            <div class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1 font">{{ comment.user.username }}</h6>
+                    <small class="text-muted font-italic">{{ comment.date}}</small>
+                </div>
+                <p class="mb-1">{{ comment.content }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

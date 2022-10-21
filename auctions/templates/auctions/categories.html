@@ -1,0 +1,19 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<h2>Categories</h2>
+<div class="container justify-content-center align-items-center">
+    <div class="d-flex flex-wrap justify-content-center py-3">
+        {% for index, category in categories %}
+        <div class="card w-25 m-2 category-card">
+            <a href="{% url 'category' index %}">
+                <img class="card-img-top p-2" src="../../static/auctions/categories-images/{{ index }}.jpg" alt="">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ category }}</h5>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

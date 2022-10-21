@@ -1,0 +1,58 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="row gap-3">
+    <div class="col pe-4 border-end">
+        <h2 class="mb-4">Your listings</h2>
+        {% for listing in listings %}
+        <div class="card mb-2 p-1 listing-card">
+            <a href="{% url 'listing' listing.id %}">
+                <div class="row no-gutters">
+                    <div class="d-flex flex-wrap  p-2 d-flex col align-items-center justify-content-center">
+                        {% if listing.image_url %}
+                        <img src="{{ listing.image_url }}">
+                        {% else %}
+                        <img src="../../static/auctions/no-image.jpg">
+                        {% endif %}
+                    </div>
+                    <div class="d-flex col align-items-center listing-content">
+                        <div class="card-body">
+                            <h5 class="card-title listing-title">{{ listing.title }}</h5>
+                            <p class="card-text">
+                            <div class="listing-description">
+                                {{ listing.description }}
+                            </div>
+                            <b>Price:</b> $<i>{{ listing.current_bid }}</i>
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Last modified {{ listing.created_at | date:"l j, Y - P" }}
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col">
+        <h2 class="mb-4">Placed bids</h2>
+        {% for bid in bids %}
+        <a href="{% url 'listing' bid.listing.id %}"></a>
+        <div class="card mb-2 p-2">
+            <a href="{% url 'listing' bid.listing.id %}">
+                <h6 class="text-center m-0 p-0">
+                    ${{ bid.bid }}
+                    on
+                    <i>
+                        {{ bid.listing.title }}
+                    </i>
+                </h6>
+            </a>
+        </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
